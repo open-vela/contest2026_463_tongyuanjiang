@@ -3,6 +3,10 @@
 # see the file kconfig-language.txt in the NuttX tools repository.
 #
 
-if ARCH_BOARD_NUCLEO_N657X0_Q
+if ARCH_BOARD_CONTEST2026_463_BOARD
+
+config ARCH_BOARD_CONTEST2026_463_BOARD_TAG
+	string "Board tag"
+	default "contest2026_463_board"
 
 endif
