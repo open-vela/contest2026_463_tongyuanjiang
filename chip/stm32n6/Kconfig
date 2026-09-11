@@ -16,3 +16,33 @@ config STM32_STM32N6XXXX
 config ARCH_CHIP_STM32N657X0
 	bool "STM32N657X0"
 	select STM32_STM32N6XXXX
+	select ARCH_CORTEXM55
+	select ARCH_HAVE_FPU
+	select ARCH_FPU
+
+menu "STM32N6 USART Configuration"
+
+config STM32_USART
+	bool
+	default n
+
+config STM32_SERIALDRIVER
+	bool
+	default y if STM32_USART
+
+config STM32_USART1
+	bool "USART1"
+	default n
+	select STM32_USART
+
+config STM32_USART2
+	bool "USART2"
+	default n
+	select STM32_USART
+
+config STM32_USART3
+	bool "USART3"
+	default n
+	select STM32_USART
+
+endmenu

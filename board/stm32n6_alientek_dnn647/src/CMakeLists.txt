@@ -2,7 +2,7 @@
 # STM32N6 Alientek DNN647 board src CMakeLists.txt
 # ##############################################################################
 
-set(SRCS stm32_boot.c stm32_bringup.c)
+set(SRCS stm32_boot.c stm32_bringup.c stm32_appinit.c)
 
 if(CONFIG_ARCH_LEDS)
   list(APPEND SRCS stm32_autoleds.c)
