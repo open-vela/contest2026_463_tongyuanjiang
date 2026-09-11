@@ -210,14 +210,14 @@ static const struct uart_ops_s g_uart_ops =
 
 /* I/O buffers */
 
-#ifdef CONFIG_STM32_USART1_SERIALDRIVER
+#ifdef CONFIG_STM32N6_USART1_SERIALDRIVER
 static char g_usart1rxbuffer[CONFIG_USART1_RXBUFSIZE];
 static char g_usart1txbuffer[CONFIG_USART1_TXBUFSIZE];
 #endif
 
 /* This describes the state of the STM32N6 USART1 port. */
 
-#ifdef CONFIG_STM32_USART1_SERIALDRIVER
+#ifdef CONFIG_STM32N6_USART1_SERIALDRIVER
 static struct stm32_serial_s g_usart1priv =
 {
   .dev =
@@ -276,7 +276,7 @@ static struct stm32_serial_s g_usart1priv =
 static struct stm32_serial_s * const
   g_uart_devs[STM32_NUSART] =
 {
-#ifdef CONFIG_STM32_USART1_SERIALDRIVER
+#ifdef CONFIG_STM32N6_USART1_SERIALDRIVER
   [0] = &g_usart1priv,
 #endif
 };
@@ -679,7 +679,7 @@ static void stm32serial_setapbclock(struct uart_dev_s *dev, bool on)
     {
     default:
       return;
-#ifdef CONFIG_STM32_USART1_SERIALDRIVER
+#ifdef CONFIG_STM32N6_USART1_SERIALDRIVER
     case STM32_USART1_BASE:
       rcc_en = RCC_APB2ENR_USART1EN;
       regaddr_set = STM32_RCC_APB2ENSR;

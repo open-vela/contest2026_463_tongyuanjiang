@@ -6,43 +6,63 @@
 comment "STM32N6 Configuration Options"
 
 config STM32_N6_PERIPHERALS
-	bool
-	default y
+        bool
+        default y
 
 config STM32_STM32N6XXXX
-	bool
-	default y
+        bool
+        default y
 
 config ARCH_CHIP_STM32N657X0
-	bool "STM32N657X0"
-	select STM32_STM32N6XXXX
-	select ARCH_CORTEXM55
-	select ARCH_HAVE_FPU
-	select ARCH_FPU
-
-menu "STM32N6 USART Configuration"
+        bool "STM32N657X0"
+        select STM32_STM32N6XXXX
+        select ARCH_CORTEXM55
+        select ARCH_HAVE_FPU
+        select ARCH_FPU
 
 config STM32_USART
-	bool
-	default n
+        bool
+        default n
 
 config STM32_SERIALDRIVER
-	bool
-	default y if STM32_USART
+        bool
+        default n
 
 config STM32_USART1
-	bool "USART1"
-	default n
-	select STM32_USART
+        bool "USART1"
+        default n
+        select STM32_USART
 
 config STM32_USART2
-	bool "USART2"
-	default n
-	select STM32_USART
+        bool "USART2"
+        default n
+        select STM32_USART
 
 config STM32_USART3
-	bool "USART3"
-	default n
-	select STM32_USART
+        bool "USART3"
+        default n
+        select STM32_USART
 
-endmenu
+config STM32N6_USART1_SERIALDRIVER
+        bool "USART1 standard serial driver"
+        default y
+        depends on STM32_USART1
+        select USART1_SERIALDRIVER
+        select ARCH_HAVE_SERIAL_TERMIOS
+        select STM32_SERIALDRIVER
+
+config STM32N6_USART2_SERIALDRIVER
+        bool "USART2 standard serial driver"
+        default y
+        depends on STM32_USART2
+        select USART2_SERIALDRIVER
+        select ARCH_HAVE_SERIAL_TERMIOS
+        select STM32_SERIALDRIVER
+
+config STM32N6_USART3_SERIALDRIVER
+        bool "USART3 standard serial driver"
+        default y
+        depends on STM32_USART3
+        select USART3_SERIALDRIVER
+        select ARCH_HAVE_SERIAL_TERMIOS
+        select STM32_SERIALDRIVER
