@@ -60,6 +60,19 @@ CONFIG_USART1_BAUD=115200
 
 USART1 时钟源选择 HSI 64MHz，波特率 115200，引脚 PE5(TX)/PE6(RX) 复用 AF7。
 
+### 3.4 LED 驱动
+
+```kconfig
+CONFIG_ARCH_LEDS=y
+CONFIG_ARCH_HAVE_LEDS=y  # 由 chip Kconfig select
+```
+
+DNN647 板载 2 个用户 LED：
+- LED1: PG10（红色，Active Low）
+- LED2: PE10（绿色，Active Low）
+
+`ARCH_HAVE_LEDS` 在芯片 Kconfig 中由 `ARCH_CHIP_STM32N657X0` select，因为 `ARCH_BOARD_CUSTOM` 机制下板级 Kconfig 不被加载（见踩坑 6.7）。
+
 ## 四、目录结构
 
 ```
@@ -151,13 +164,29 @@ STM32N6 无内部 Flash，使用 DEV Boot 模式（BOOT1=1）：
 
 **说明**：STM32N6 系列没有片内 Flash，代码必须下载到 SRAM 运行。必须使用 DEV Boot 模式（BOOT1=1），CubeProgrammer 只能下载不能运行，需用 CubeIDE Debug 或 openocd 启动执行。
 
+### 6.7 ARCH_HAVE_LEDS Kconfig 加载问题
+
+**现象**：defconfig 中设置 `CONFIG_ARCH_LEDS=y`，但 .config 中始终不生效，`stm32_autoleds.c` 不编译。
+
+**根因**：`ARCH_LEDS` 依赖 `ARCH_HAVE_LEDS`（hidden config），而 `ARCH_HAVE_LEDS` 需要 board Kconfig 中 `select`。但 `ARCH_BOARD_CUSTOM` 机制下，板级 Kconfig 文件**不会被 Kconfig 系统加载**（`boards/dummy/Kconfig` 为空），只有芯片 Kconfig 通过 `arch/dummy/Kconfig` 被加载。
+
+**解决**：在芯片 Kconfig `chip/stm32n6/Kconfig` 的 `ARCH_CHIP_STM32N657X0` config 中添加 `select ARCH_HAVE_LEDS`，因为芯片 Kconfig 确实被加载。
+
+### 6.8 stm32_autoleds.c 头文件
+
+**现象**：编译报错 `nuttx/debug.h: No such file or directory`。
+
+**解决**：将 `#include <nuttx/debug.h>` 改为 `#include <debug.h>`（与 stm32_userleds.c 同样的修复）。
+
 ## 七、当前状态
 
 - [x] L0：系统启动，NSH 串口控制台可用，`nsh>` 提示符正常
 - [x] procfs 已启用（`/proc`）
 - [x] NSH 内置命令可用（help, ls, cat, free, ps 等）
-- [ ] LED 驱动（board.h 中 LED 引脚仍为 Nucleo 默认配置，需更新为 PG10/PE10）
+- [x] LED 驱动适配完成（PG10=LED1/Red, PE10=LED2/Green, ARCH_LEDS=y）
 - [ ] 文件系统（RomFS/TmpFS）
+- [ ] I2C 驱动适配
+- [ ] SPI 驱动适配
 - [ ] 网络栈（如板载以太网/WiFi）
 
 ## 八、关键文件索引
@@ -169,4 +198,7 @@ STM32N6 无内部 Flash，使用 DEV Boot 模式（BOOT1=1）：
 | `chip/stm32n6/stm32_lowputc.c` | 底层 UART 输出，波特率计算 |
 | `chip/stm32n6/stm32_serial.c` | 串口驱动 upper half |
 | `board/.../configs/nsh/defconfig` | 板级配置 |
+| `board/.../src/nucleo-n657x0-q.h` | LED GPIO 引脚定义（GPIO_LED1/LED2） |
+| `board/.../src/stm32_autoleds.c` | 自动 LED 驱动（OS 状态指示） |
+| `board/.../src/stm32_userleds.c` | 用户 LED 驱动（shell 可控） |
 | `contest2026_463_tongyuanjiang.xml` | manifest，linkfile 映射定义 |
