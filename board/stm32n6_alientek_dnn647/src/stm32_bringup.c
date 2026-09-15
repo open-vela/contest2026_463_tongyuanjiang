@@ -71,7 +71,7 @@ int stm32_bringup(void)
         }
       else
         {
-          syslog(LOG_INFO, "I2C0 registered (bitbang, PD4=SDA, PD14=SCL)\n");
+          syslog(LOG_INFO, "I2C0 registered (bitbang, PE13=SCL, PE14=SDA)\n");
         }
     }
 #endif

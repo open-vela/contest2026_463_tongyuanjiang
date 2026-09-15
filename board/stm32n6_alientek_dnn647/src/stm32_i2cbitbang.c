@@ -10,7 +10,7 @@
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * I2C bitbang lower-half driver for DNN647 board.
- * Uses GPIO to bitbang I2C2 on PD14(SCL) and PD4(SDA).
+ * Uses GPIO to bitbang I2C4 on PE13(SCL) and PE14(SDA).
  *
  ****************************************************************************/
 
@@ -33,14 +33,14 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
-/* I2C2 pin definitions for DNN647:
- * PD14 = I2C2_SCL (10K pull-up on board)
- * PD4  = I2C2_SDA (10K pull-up on board)
+/* I2C4 pin definitions for DNN647:
+ * PE13 = I2C4_SCL (pull-up on board)
+ * PE14 = I2C4_SDA (pull-up on board)
  */
 
-#define GPIO_I2C2_SCL  (GPIO_OUTPUT | GPIO_OPENDRAIN | GPIO_SPEED_2MHZ |                         GPIO_OUTPUT_SET | GPIO_PORTD | GPIO_PIN14)
+#define GPIO_I2C4_SCL  (GPIO_OUTPUT | GPIO_OPENDRAIN | GPIO_SPEED_2MHZ |                         GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN13)
 
-#define GPIO_I2C2_SDA  (GPIO_OUTPUT | GPIO_OPENDRAIN | GPIO_SPEED_2MHZ |                         GPIO_OUTPUT_SET | GPIO_PORTD | GPIO_PIN4)
+#define GPIO_I2C4_SDA  (GPIO_OUTPUT | GPIO_OPENDRAIN | GPIO_SPEED_2MHZ |                         GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN14)
 
 /****************************************************************************
  * Private Types
@@ -57,30 +57,30 @@ struct stm32_i2c_lower_s
 
 static void stm32_i2c_initialize(FAR struct i2c_bitbang_lower_dev_s *lower)
 {
-  stm32_configgpio(GPIO_I2C2_SCL);
-  stm32_configgpio(GPIO_I2C2_SDA);
+  stm32_configgpio(GPIO_I2C4_SCL);
+  stm32_configgpio(GPIO_I2C4_SDA);
 }
 
 static void stm32_i2c_set_scl(FAR struct i2c_bitbang_lower_dev_s *lower,
                               bool high)
 {
-  stm32_gpiowrite(GPIO_I2C2_SCL, high);
+  stm32_gpiowrite(GPIO_I2C4_SCL, high);
 }
 
 static void stm32_i2c_set_sda(FAR struct i2c_bitbang_lower_dev_s *lower,
                               bool high)
 {
-  stm32_gpiowrite(GPIO_I2C2_SDA, high);
+  stm32_gpiowrite(GPIO_I2C4_SDA, high);
 }
 
 static bool stm32_i2c_get_scl(FAR struct i2c_bitbang_lower_dev_s *lower)
 {
-  return stm32_gpioread(GPIO_I2C2_SCL);
+  return stm32_gpioread(GPIO_I2C4_SCL);
 }
 
 static bool stm32_i2c_get_sda(FAR struct i2c_bitbang_lower_dev_s *lower)
 {
-  return stm32_gpioread(GPIO_I2C2_SDA);
+  return stm32_gpioread(GPIO_I2C4_SDA);
 }
 
 /****************************************************************************
