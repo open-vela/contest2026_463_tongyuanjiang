@@ -19,6 +19,7 @@ config ARCH_CHIP_STM32N657X0
         select ARCH_CORTEXM55
         select ARCH_HAVE_FPU
         select ARCH_FPU
+        select ARCH_HAVE_LEDS
 
 config STM32_USART
         bool

@@ -3,10 +3,14 @@
 # see the file kconfig-language.txt in the NuttX tools repository.
 #
 
+config ARCH_HAVE_LEDS
+        bool
+        default y
+
 if ARCH_BOARD_CONTEST2026_463_BOARD
 
 config ARCH_BOARD_CONTEST2026_463_BOARD_TAG
-	string "Board tag"
-	default "contest2026_463_board"
+        string "Board tag"
+        default "contest2026_463_board"
 
 endif

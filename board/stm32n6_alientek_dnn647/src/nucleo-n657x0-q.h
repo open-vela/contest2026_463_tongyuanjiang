@@ -39,22 +39,19 @@
 
 /* LED definitions **********************************************************/
 
-/* The Nucleo-N657X0-Q has three user LEDs (UM3417 silkscreen):
+/* The Alientek DNN647 has two user LEDs:
  *
- *   LD5  PG10  Red
- *   LD6  PG0   Green
- *   LD7  PG8   Blue
+ *   LED1  PG10  Red
+ *   LED2  PE10  Green
  *
  * - When the I/O is LOW,  the LED is on.
  * - When the I/O is HIGH, the LED is off.
  */
 
-#define GPIO_LD5       (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ | \
+#define GPIO_LED1      (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ | \
                         GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN10)
-#define GPIO_LD6       (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ | \
-                        GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN0)
-#define GPIO_LD7       (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ | \
-                        GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN8)
+#define GPIO_LED2      (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ | \
+                        GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN10)
 
 /****************************************************************************
  * Public Types

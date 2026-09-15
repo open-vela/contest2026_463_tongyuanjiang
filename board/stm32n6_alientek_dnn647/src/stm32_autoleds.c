@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <nuttx/debug.h>
+#include <debug.h>
 
 #include <sys/param.h>
 
@@ -51,9 +51,8 @@
 
 static const uint32_t g_ledmap[BOARD_NLEDS] =
 {
-  GPIO_LD5,
-  GPIO_LD6,
-  GPIO_LD7,
+  GPIO_LED1,
+  GPIO_LED2,
 };
 
 /****************************************************************************
@@ -79,7 +78,7 @@ void board_autoled_initialize(void)
 {
   int i;
 
-  /* Configure the LD5, LD6, and LD7 GPIOs for output. Initial state is OFF */
+  /* Configure LED1 and LED2 GPIOs for output. Initial state is OFF */
 
   for (i = 0; i < nitems(g_ledmap); i++)
     {
@@ -98,49 +97,41 @@ void board_autoled_on(int led)
     {
     case LED_HEAPALLOCATE:
       phy_set_led(BOARD_LED_GREEN, false);
-      phy_set_led(BOARD_LED_BLUE,  false);
       phy_set_led(BOARD_LED_RED,   false);
       break;
 
     case LED_IDLE:
       phy_set_led(BOARD_LED_GREEN, true);
-      phy_set_led(BOARD_LED_BLUE,  false);
       phy_set_led(BOARD_LED_RED,   false);
      break;
 
     case LED_IRQSENABLED:
       phy_set_led(BOARD_LED_GREEN, false);
-      phy_set_led(BOARD_LED_BLUE,  true);
-      phy_set_led(BOARD_LED_RED,   false);
+      phy_set_led(BOARD_LED_RED,   true);
       break;
 
     case LED_STACKCREATED:
       phy_set_led(BOARD_LED_GREEN, true);
-      phy_set_led(BOARD_LED_BLUE,  true);
-      phy_set_led(BOARD_LED_RED,   false);
+      phy_set_led(BOARD_LED_RED,   true);
      break;
 
     case LED_INIRQ:
       phy_set_led(BOARD_LED_GREEN, false);
-      phy_set_led(BOARD_LED_BLUE,  false);
       phy_set_led(BOARD_LED_RED,   true);
       break;
 
     case LED_SIGNAL:
       phy_set_led(BOARD_LED_GREEN, true);
-      phy_set_led(BOARD_LED_BLUE,  false);
       phy_set_led(BOARD_LED_RED,   true);
       break;
 
     case LED_ASSERTION:
       phy_set_led(BOARD_LED_GREEN, false);
-      phy_set_led(BOARD_LED_BLUE,  true);
       phy_set_led(BOARD_LED_RED,   true);
       break;
 
     case LED_PANIC:
       phy_set_led(BOARD_LED_GREEN, true);
-      phy_set_led(BOARD_LED_BLUE,  true);
       phy_set_led(BOARD_LED_RED,   true);
       break;
 
@@ -167,13 +158,13 @@ void board_autoled_off(int led)
       break;
 
     case LED_ASSERTION:
-      phy_set_led(BOARD_LED_BLUE,  false);
+      phy_set_led(BOARD_LED_GREEN, false);
       break;
 
     case LED_PANIC:
       phy_set_led(BOARD_LED_GREEN, false);
       phy_set_led(BOARD_LED_RED,   false);
-      phy_set_led(BOARD_LED_BLUE,  false);
+      phy_set_led(BOARD_LED_GREEN, false);
       break;
 
     case LED_IDLE:

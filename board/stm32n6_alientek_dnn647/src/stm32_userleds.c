@@ -49,9 +49,8 @@
 
 static const uint32_t g_ledcfg[BOARD_NLEDS] =
 {
-  GPIO_LD5,
-  GPIO_LD6,
-  GPIO_LD7,
+  GPIO_LED1,
+  GPIO_LED2,
 };
 
 /****************************************************************************
@@ -73,7 +72,7 @@ uint32_t board_userled_initialize(void)
 {
   int i;
 
-  /* Configure LD5, LD6, and LD7 GPIOs for output */
+  /* Configure LED1 and LED2 GPIOs for output */
 
   for (i = 0; i < nitems(g_ledcfg); i++)
     {
@@ -117,7 +116,7 @@ void board_userled_all(uint32_t ledset)
 {
   int i;
 
-  /* Configure LD5, LD6, and LD7 GPIOs.  Active Low: pin LOW = LED on. */
+  /* Configure LED1 and LED2 GPIOs.  Active Low: pin LOW = LED on. */
 
   for (i = 0; i < nitems(g_ledcfg); i++)
     {

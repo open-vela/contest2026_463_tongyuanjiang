@@ -59,3 +59,8 @@ CONFIG_NSH_CMDPARMS=y
 #
 CONFIG_ELF=y
 CONFIG_LIB_BOARDCTL=y
+
+#
+# LED support (auto LEDs for OS status indication)
+#
+CONFIG_ARCH_LEDS=y
