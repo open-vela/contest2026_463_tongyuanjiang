@@ -65,3 +65,5 @@ FAR struct i2c_master_s *stm32_i2c_bitbang_initialize(void);
 
 #endif /* __ASSEMBLY__ */
 #endif /* __BOARDS_ARM_STM32N6_NUCLEO_N657X0_Q_SRC_NUCLEO_N657X0_Q_H */
+
+ FAR struct spi_dev_s *stm32_spi_bitbang_initialize(void);

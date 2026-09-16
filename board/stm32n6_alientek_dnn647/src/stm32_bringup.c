@@ -24,6 +24,8 @@
 #include <nuttx/board.h>
 #include <nuttx/leds/userled.h>
 #include <nuttx/i2c/i2c_master.h>
+#include <nuttx/spi/spi.h>
+#include <nuttx/spi/spi_bitbang.h>
 
 #include "nucleo-n657x0-q.h"
 
@@ -74,6 +76,23 @@ int stm32_bringup(void)
           syslog(LOG_INFO, "I2C0 registered (bitbang, PE13=SCL, PE14=SDA)\n");
         }
     }
+#endif
+
+
+#ifdef CONFIG_SPI_BITBANG
+  {
+    FAR struct spi_dev_s *spi_dev;
+    spi_dev = stm32_spi_bitbang_initialize();
+    if (spi_dev == NULL)
+      {
+        syslog(LOG_ERR, "SPI0 init failed\n");
+      }
+    else
+      {
+        spi_register(spi_dev, 0);
+        syslog(LOG_INFO, "SPI0 registered (bitbang, PE15=SCK, PH7=MOSI, PH8=MISO, PH6=CS)\n");
+      }
+  }
 #endif
 
   return OK;
