@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/arm/stm32n6/nucleo-n657x0-q/scripts/flash.ld
+ * boards/arm/stm32n6/stm32n6_alientek_dnn647/scripts/flash.ld
  *
  * SPDX-License-Identifier: Apache-2.0
  *

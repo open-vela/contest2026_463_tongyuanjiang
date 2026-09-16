@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/arm/stm32n6/nucleo-n657x0-q/src/stm32_boot.c
+ * boards/arm/stm32n6/stm32n6_alientek_dnn647/src/stm32_boot.c
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,7 +31,7 @@
 #include <nuttx/board.h>
 
 #include "arm_internal.h"
-#include "nucleo-n657x0-q.h"
+#include "stm32n6_alientek_dnn647.h"
 
 #include <arch/board/board.h>
 

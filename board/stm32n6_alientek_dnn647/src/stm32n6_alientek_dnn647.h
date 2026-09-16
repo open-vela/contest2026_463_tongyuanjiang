@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/arm/stm32n6/nucleo-n657x0-q/src/nucleo-n657x0-q.h
+ * boards/arm/stm32n6/stm32n6_alientek_dnn647/src/stm32n6_alientek_dnn647.h
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,8 +11,8 @@
  *
  ****************************************************************************/
 
-#ifndef __BOARDS_ARM_STM32N6_NUCLEO_N657X0_Q_SRC_NUCLEO_N657X0_Q_H
-#define __BOARDS_ARM_STM32N6_NUCLEO_N657X0_Q_SRC_NUCLEO_N657X0_Q_H
+#ifndef __BOARDS_ARM_STM32N6_STM32N6_ALIENTEK_DNN647_SRC_STM32N6_ALIENTEK_DNN647_H
+#define __BOARDS_ARM_STM32N6_STM32N6_ALIENTEK_DNN647_SRC_STM32N6_ALIENTEK_DNN647_H
 
 /****************************************************************************
  * Included Files
@@ -39,8 +39,10 @@
  * - When the I/O is HIGH, the LED is off.
  */
 
-#define GPIO_LED1      (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ |                         GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN10)
-#define GPIO_LED2      (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ |                         GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN10)
+#define GPIO_LED1      (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ | \
+                        GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN10)
+#define GPIO_LED2      (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHZ | \
+                        GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN10)
 
 /****************************************************************************
  * Public Types
@@ -63,7 +65,10 @@ struct i2c_master_s;
 FAR struct i2c_master_s *stm32_i2c_bitbang_initialize(void);
 #endif
 
-#endif /* __ASSEMBLY__ */
-#endif /* __BOARDS_ARM_STM32N6_NUCLEO_N657X0_Q_SRC_NUCLEO_N657X0_Q_H */
+#ifdef CONFIG_SPI_BITBANG
+struct spi_dev_s;
+FAR struct spi_dev_s *stm32_spi_bitbang_initialize(void);
+#endif
 
- FAR struct spi_dev_s *stm32_spi_bitbang_initialize(void);
+#endif /* __ASSEMBLY__ */
+#endif /* __BOARDS_ARM_STM32N6_STM32N6_ALIENTEK_DNN647_SRC_STM32N6_ALIENTEK_DNN647_H */

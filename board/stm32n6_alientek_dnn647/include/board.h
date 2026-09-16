@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/arm/stm32n6/nucleo-n657x0-q/include/board.h
+ * boards/arm/stm32n6/stm32n6_alientek_dnn647/include/board.h
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,8 +20,8 @@
  *
  ****************************************************************************/
 
-#ifndef __BOARDS_ARM_STM32N6_NUCLEO_N657X0_Q_INCLUDE_BOARD_H
-#define __BOARDS_ARM_STM32N6_NUCLEO_N657X0_Q_INCLUDE_BOARD_H
+#ifndef __BOARDS_ARM_STM32N6_STM32N6_ALIENTEK_DNN647_INCLUDE_BOARD_H
+#define __BOARDS_ARM_STM32N6_STM32N6_ALIENTEK_DNN647_INCLUDE_BOARD_H
 
 /****************************************************************************
  * Included Files
@@ -132,7 +132,7 @@
 
 /* USART1 GPIOs *************************************************************/
 
-/* USART1 (Nucleo Virtual Console): PE5=TX (AF7), PE6=RX (AF7)
+/* USART1 (DNN647 Virtual Console): PE5=TX (AF7), PE6=RX (AF7)
  * Connected to the on-board ST-Link to provide a Virtual COM Port.
  */
 
@@ -177,4 +177,4 @@ void stm32_board_initialize(void);
 #endif
 
 #endif /* __ASSEMBLY__ */
-#endif /* __BOARDS_ARM_STM32N6_NUCLEO_N657X0_Q_INCLUDE_BOARD_H */
+#endif /* __BOARDS_ARM_STM32N6_STM32N6_ALIENTEK_DNN647_INCLUDE_BOARD_H */
