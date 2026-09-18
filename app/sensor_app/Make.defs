@@ -1,0 +1,6 @@
+##############################################################################
+# Contest 2026 team 463 sensor app - Make.defs
+##############################################################################
+ifneq ($(CONFIG_LVX_USE_DEMO_CONTEST2026_463_SENSOR_APP),)
+CONFIGURED_APPS += $(APPDIR)/packages/demos/contest2026_463_sensor_app
+endif
