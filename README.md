@@ -1,148 +1,185 @@
-# contest2026_463_tongyuanjiang
+# openvela STM32N647 DNN647 硬件适配
 
-👋 欢迎参加 **2026 首届 openvela AI 硬件开发者大赛**！
+## 作品名
 
-这是组委会为你的队伍创建的**专属参赛仓库**（本仓为样例/模板，队伍编号 `463`；你看到的将是你自己的 `contest2026_<编号>_<队伍名>`）。比赛期间，你的全部参赛代码、打包产物与 AI Coding 日志都提交到这里。
+**openvela 移植至正点原子 DNN647 开发板（STM32N647X0H3Q, Cortex-M55）**
 
-> 本仓既是「代码仓」，又内置了一键拉取整套 openvela 工程的 `repo` 清单（manifest）。你只需跟它打交道，**自始至终只动一个文件夹**。
+## 简介
 
----
+本项目将 openvela 操作系统移植至正点原子 DNN647 开发板，完成系统启动引导、UART 控制台、GPIO/LED、I2C、SPI 等基础外设驱动适配，并在硬件上验证通过。移植遵循 openvela manifest + linkfile 架构，板级与芯片层代码均位于本专属仓，通过 linkfile 映射至 openvela 编译树。
 
-## 一、先读这些官方文档
+## 选题方向
 
-**通用（所有赛道必读）：**
+**新硬件适配赛道** — 基于 STM32N647（ARM Cortex-M55）的 openvela BSP 适配。
 
-| 文档                                                                                                                                     | 用途                                           |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| [《大赛总览》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/contest_overview.md)                        | 赛道、流程、评分、资源，建议先通读             |
-| [《参赛代码提交指南》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/code_submission_guide.md)           | 仓库获取、提交流程、时间与权限（**以此为准**） |
-| [《AI Coding 日志归集与提交手册》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_coding_log_guide.md) | 如何导出 AI 对话日志并提交到 `logs/`           |
+## 目录结构
 
-**按你的赛道选读（三选一）：**
+```
+contest2026_463_tongyuanjiang/
+├── contest2026_463_tongyuanjiang.xml   # manifest，引用 openvela.xml + linkfile 映射
+├── README.md                            # 本文件
+├── docs/
+│   └── stm32n647_porting_guide.md      # 适配指南文档
+├── chip/
+│   ├── include/stm32n6/                 # 芯片头文件 (chip.h, irq.h, stm32n6xx_irq.h)
+│   └── stm32n6/                         # 芯片层驱动源码
+│       ├── stm32_start.c                # 芯片启动入口
+│       ├── stm32_gpio.c                 # GPIO 驱动
+│       ├── stm32_serial.c               # UART 串口驱动
+│       ├── stm32_irq.c                  # 中断控制
+│       ├── stm32n6xx_rcc.c              # 时钟配置 (RCC)
+│       ├── stm32_pwr.c                  # 电源管理
+│       ├── stm32_idle.c                 # 空闲任务
+│       ├── stm32_timerisr.c             # 系统定时器
+│       ├── stm32_lowputc.c              # 底层串口输出
+│       ├── stm32_rcc.c                  # RCC 辅助
+│       ├── hardware/                    # 寄存器定义头文件
+│       ├── Kconfig                      # 芯片 Kconfig 配置
+│       └── CMakeLists.txt              # 芯片层 CMake
+├── board/
+│   └── stm32n6_alientek_dnn647/         # 板级代码
+│       ├── include/board.h              # 板级配置（时钟、SRAM、LED 引脚）
+│       ├── src/
+│       │   ├── stm32n6_alientek_dnn647.h  # 板级头文件
+│       │   ├── stm32_boot.c              # 启动初始化
+│       │   ├── stm32_bringup.c           # 板级 bringup（注册 userleds/i2c0/spi0）
+│       │   ├── stm32_autoleds.c          # LED 自动状态指示
+│       │   ├── stm32_userleds.c          # 用户 LED 驱动 (/dev/userleds)
+│       │   ├── stm32_i2cbitbang.c        # I2C4 bitbang 驱动
+│       │   ├── stm32_spibitbang.c        # SPI5 bitbang 驱动
+│       │   ├── stm32_appinit.c           # 应用初始化
+│       │   └── etc/init.d/               # 启动脚本 (rcS, rc.sysinit)
+│       ├── configs/nsh/defconfig        # NSH 配置
+│       ├── scripts/flash.ld             # 链接脚本
+│       └── CMakeLists.txt              # 板级 CMake（含 vela_nuttx.bin 生成）
+├── app/
+│   ├── hello_app/                       # 示例应用
+│   ├── sensor_app/                      # 陀螺仪 I2C 传感器采集 (QMI8658A)
+│   ├── gpio_app/                        # GPIO 读写 shell 命令
+│   └── spi_app/                         # SPI 寄存器读写 shell 命令
+├── quickapp/
+│   └── hello_quickapp/                  # 快速应用示例
+└── logs/
+    └── README.md                        # AI Coding 日志说明
+```
 
-| 赛道                  | 教程导航                                                                                                                                                 |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 快应用 / 手表应用创新 | [快应用教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/quickapp/quickapp_guide_index.md)                         |
-| AI 硬件产品创新       | [AI 硬件赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_hardware/ai_hardware_guide_index.md)              |
-| 新硬件适配            | [新硬件适配赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/hardware_porting/hardware_porting_guide_index.md) |
+## 硬件信息
 
----
+| 项目 | 说明 |
+|------|------|
+| 开发板 | 正点原子 DNN647 |
+| MCU | STM32N647X0H3Q |
+| 内核 | ARM Cortex-M55 |
+| SRAM | 4MB (0x34000000 - 0x343FFFFF) |
+| 内部 Flash | 无（代码运行于 SRAM） |
+| BOOT 模式 | DEV Boot (BOOT1=1) |
+| 调试接口 | ST-Link via SWD |
 
-## 二、第一步：拉取完整工程
+## 外设适配
 
-用组委会提供的命令一键拉取「openvela 全量源码 + 你的专属仓」：
+| 外设 | 引脚 | 接口 | 设备节点 | 状态 |
+|------|------|------|----------|------|
+| UART 控制台 | PE5(TX)/PE6(RX), AF7, 115200 | USART1 | /dev/console | 已验证 |
+| LED1 (红) | PG10, Active Low | GPIO | /dev/userleds | 已验证 |
+| LED2 (绿) | PE10, Active Low | GPIO | /dev/userleds | 已验证 |
+| I2C | PE13(SCL)/PE14(SDA), 开漏 | I2C4 bitbang | /dev/i2c0 | 已验证 |
+| SPI | PE15(SCK)/PH7(MOSI)/PH8(MISO)/PH6(CS) | SPI5 bitbang | /dev/spi0 | 已验证 |
+
+## 编译
+
+### 环境要求
+
+- openvela 工程已通过 `repo init` + `repo sync` 拉取
+- 交叉编译工具链：arm-none-eabi-gcc 13.4.0（openvela 预置）
+
+### 编译命令
 
 ```bash
-repo init -u https://github.com/open-vela/contest2026_463_tongyuanjiang \
-  -b dev-ai-contest-2026 -m contest2026_463_tongyuanjiang.xml
-repo sync -c -j8
+cd ~/openvela
+./build.sh vendor/openvela/boards/contest2026_463_board/configs/nsh/ --cmake -j3
 ```
 
-同步后，你的整个仓库位于工作区的 `contest2026_463_tongyuanjiang/`，openvela 全量源码在外层（`nuttx/`、`apps/`、`packages/`、`vendor/` 等）。
+### 编译产物
 
----
+| 文件 | 说明 | 路径 |
+|------|------|------|
+| `vela_nuttx.bin` | 最终固件二进制（openvela 标准命名） | `cmake_out/contest2026_463_board_nsh/vela_nuttx.bin` |
+| `nuttx` | ELF 文件（含调试符号，用于调试） | `cmake_out/contest2026_463_board_nsh/nuttx` |
+| `System.map` | 符号表 | `cmake_out/contest2026_463_board_nsh/System.map` |
 
-## 三、第二步：在哪里写代码
+> `vela_nuttx.bin` 通过 NuttX 标准 `nuttx_post_build` 机制自动生成。
 
-**只在自己的仓目录 `contest2026_463_tongyuanjiang/` 里开发。** 不同作品形态放在对应子目录，manifest 会通过 `<linkfile>` 把它们**软链**到 openvela 编译树该在的位置——你不用手动 copy：
+## 烧录与运行
 
-| 作品形态 | 你的代码放这里             | 系统自动映射到                                 |
-| -------- | -------------------------- | ---------------------------------------------- |
-| 应用     | `app/hello_app/`           | `packages/demos/contest2026_463_hello_app`     |
-| 快应用   | `quickapp/hello_quickapp/` | `packages/apps/contest2026_463_hello_quickapp` |
-| 板级适配 | `board/contest_board/`     | `vendor/openvela/boards/contest2026_463_board` |
+STM32N6 无内部 Flash，代码运行于 SRAM。BOOT1=1（DEV Boot 模式）。
 
-> 用不到的形态目录可以删掉；新增作品时按同样规则加子目录，并在 `contest2026_463_tongyuanjiang.xml` 里补一条 `<linkfile>` 映射即可。**生产仓库（packages/nuttx/vendor 等）零改动。**
+### 烧录方式：STM32CubeIDE Debug（已验证）
 
-建议仓库目录约定（便于评委定位）：
+1. 设置 BOOT1=1（DEV Boot 模式），连接 ST-Link
+2. 打开 STM32CubeIDE，配置 Debug Configurations
+3. 加载 `nuttx` ELF 文件至 SRAM
+4. 点击 Debug，自动设置 PC 和 SP，停于入口
+5. 点击 Resume 运行
+6. 串口连接：PE5(TX)/PE6(RX) via CH340, 波特率 115200
 
-```text
-app/ | quickapp/ | board/   # 你的作品代码
-logs/                       # AI Coding 日志（主动导出后提交，格式见 logs/README.md）
-README.md                   # 作品说明（提交前请改成你自己的，见第六节）
+### 串口验证
+
+成功启动后显示：
+
+```
+userleds registered at /dev/userleds
+I2C0 registered (bitbang, PE13=SCL, PE14=SDA)
+SPI0 registered (bitbang, PE15=SCK, PH7=MOSI, PH8=MISO, PH6=CS)
+
+NuttShell (NSH)
+dnn647-ap>
 ```
 
-> 仓内附带了一个 `.gitignore.example`，给出了**编译产物**等不需要进仓的文件示例。如需启用，`cp .gitignore.example .gitignore` 后按需增删即可。**注意 `logs/` 下最终导出的 AI Coding 日志必须提交，不要忽略。**
->
-> `logs/` 的目录结构与提交格式见 [logs/README.md](logs/README.md)。
+> 注：STM32N6 SRAM 执行特性下，`vela_nuttx.bin` 需通过 IDE 设置 PC 后运行，不支持独立 RESET 启动。
 
----
+## 运行验证
 
-## 四、第三步：编译与运行
+### 1. GPIO 驱动验证
 
-编译/运行步骤随作品形态不同而不同，请参考你所在赛道的教程导航：
-
-- 快应用 / 手表应用：[快应用教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/quickapp/quickapp_guide_index.md)（含模拟器与开发板部署）。
-- AI 硬件产品创新：[AI 硬件赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_hardware/ai_hardware_guide_index.md)（环境搭建、编译烧录、Skill 开发）。
-- 新硬件适配：[新硬件适配赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/hardware_porting/hardware_porting_guide_index.md)（BSP 移植、最小 NSH 基线）。
-
-子目录已通过 manifest 中的 `<linkfile>` 软链进 openvela 编译树，因此构建在 openvela 工作区**根目录**（即你这个仓的上一级）进行。openvela 使用 `build.sh` 作为统一入口，接收一个 **board config 路径**作为参数：
-
-```bash
-# 进入 openvela 工作区根目录（你的仓的上一级）
-cd ..
-
-# 通用语法：第一个参数是 board config 路径，第二个参数可以是 menuconfig / distclean 等
-./build.sh <board-config-path> [menuconfig|distclean] [-j8]
+```
+dnn647-ap> leds                    # 启动 LED 周期闪烁（500ms）
+dnn647-ap> gpio_app mode PG10 out # 配置引脚为输出
+dnn647-ap> gpio_app write PG10 1  # 写高电平
+dnn647-ap> gpio_app read PG10     # 读电平
+dnn647-ap> gpio_app mode PE14 in pullup  # 配置为输入+上拉
 ```
 
-> 具体的 board config 路径、目标产物、模拟器/真机部署方式请以你所在赛道的教程导航为准。本仓 `app/` `quickapp/` `board/` 三个示例骨架对应的 Kconfig 选项可通过 `menuconfig` 启用。
+### 2. I2C 驱动验证
 
----
-
-## 五、第四步：提交作品
-
-1. **fork** 你的专属仓 → 开发 → `git commit` 并推送 → 向专属仓发起 **Pull Request**，可**自行 review 并合入**（无需等组委会）。
-2. **AI Coding 日志**：与 AI 工具的对话会自动记录到本机 staging（不会自动上传），需你**主动导出/打包**选定会话到仓内 `logs/` 目录后一并提交。详见[《AI Coding 日志归集与提交手册》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_coding_log_guide.md)。
-3. 若需改动 **nuttx 等公共仓库**，不在本仓改，而是 fork 对应公共仓、以 PR 提交到 `dev-ai-contest-2026` 分支，由组委会 review 后合入。
-
-> ⏰ **提交作品截止：9 月 20 日**。截止后统一收回 push 权限，仍可查看 / clone。
->
-> 获奖后再按要求将作品 PR 至 openvela 上游对应仓库（走标准 PR + CI 流程）。
-
-### 关于 PR 与 CLA
-
-- 本仓所有改动通过 **Pull Request** 合入（分支保护强制，可自行合入自己的 PR）。
-- 首次贡献需在[**官网签署 CLA**](https://openvela.com/#/community/cla)；PR 上会自动跑 `cla/signature` 检查，在官网签署成功后，在 PR 评论 `/check-cla` 复检即可通过。
-
----
-
-## 六、提交前：把本 README 改成你的作品说明
-
-本文件目前是组委会给的**使用说明书**。**作品提交前，请把它替换成你自己作品的说明**，方便评委快速了解你做了什么、怎么跑起来。建议至少包含以下内容：
-
-```markdown
-# <你的作品名>
-
-## 一、作品简介
-<一句话/一段话说明这个作品是什么、解决什么问题、亮点在哪>
-
-## 二、选题方向
-<快应用 / 手表应用创新 ｜ AI 硬件产品创新 ｜ 新硬件适配 ｜ 自定方向，并简述理由>
-
-## 三、目录结构
-<列出你这个仓里各目录/文件的作用，例如：>
-- `app/xxx/`        — <说明>
-- `board/xxx/`      — <说明>
-- `quickapp/xxx/`   — <说明>
-- `logs/`           — AI Coding 日志
-- `docs/` 或其他    — <说明>
-
-## 四、运行方式
-<拉取工程后，如何编译、烧录/部署、运行的完整步骤；最好能让评委照着一步步复现>
-
-## 五、AI Coding 使用说明
-<说明本作品如何借助 AI 辅助开发：
-- 在需求拆解 / 方案设计 / 编码 / 调试 / 文档等环节如何与 AI 协作；
-- AI 对开发效率或质量带来的实际帮助。
-完整对话日志见 logs/ 目录>
+```
+dnn647-ap> i2c bus                # 查看 I2C 总线
+dnn647-ap> i2c dev                 # 扫描设备（检测到 0x50 EEPROM, 0x6a QMI8658A 等）
+dnn647-ap> sensor_app              # 读取 QMI8658A 陀螺仪数据（WHO_AM_I + 20 次采样）
 ```
 
-> 提示：将会根据「作品本身 + 你的 README 说明 + `logs/` 里的 AI Coding 日志」来理解和评估你的作品，README 写清楚很重要。
+### 3. SPI 驱动验证
 
----
+```
+dnn647-ap> spi_app probe          # 探测 SPI 总线设备
+dnn647-ap> spi_app read 0x9F      # 读 JEDEC ID
+dnn647-ap> spi_app write 0x01 0x42  # 写寄存器
+dnn647-ap> spi_app test           # 稳定性测试（20 次交换，无卡死/超时）
+```
 
-## 附：仓库命名规范
+## AI Coding 使用说明
 
-`contest2026_<编号>_<队伍名>` — 编号三位零填充；队名 slug（全小写、英文/拼音、连字符）。例：`contest2026_463_tongyuanjiang`。
-（仓库由组委会统一创建，**每队仅一个仓**，无需自行命名。）
+本项目在开发过程中使用了 AI 辅助编程工具（TRAE）进行代码生成、调试和文档编写。AI 辅助主要应用于：
+
+- 芯片层驱动代码（GPIO、RCC、PWR、Serial、Timer）编写与调试
+- 板级 bringup 代码和 I2C/SPI bitbang 驱动实现
+- CMake 构建配置和 manifest linkfile 映射
+- 应用层 shell 命令（sensor_app、gpio_app、spi_app）开发
+- 编译错误排查和硬件调试问题分析
+
+### AI Coding 日志说明
+
+本项目**未导出 AI 对话日志**，自愿放弃 AI Coding 日志相关评分。`logs/` 目录仅保留说明文件。
+
+## 许可证
+
+Apache License 2.0
