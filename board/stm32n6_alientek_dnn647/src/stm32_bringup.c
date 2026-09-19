@@ -31,7 +31,6 @@
 #include <nuttx/leds/userled.h>
 #include <nuttx/i2c/i2c_master.h>
 #include <nuttx/spi/spi.h>
-#include <nuttx/spi/spi_bitbang.h>
 
 #include "stm32n6_alientek_dnn647.h"
 
@@ -46,16 +45,14 @@
  *
  * Description:
  *   板级后期初始化，注册 /dev/userleds、I2C0、SPI0 等设备节点。
- *   /dev/userleds 始终注册（无论 CONFIG_ARCH_LEDS 是否定义），
- *   以便 NSH `leds` 命令可以读写 LED 引脚电平。
  *
  ****************************************************************************/
 
 int stm32_bringup(void)
 {
-#ifdef CONFIG_USERLED_LOWER
   int ret;
 
+#ifdef CONFIG_USERLED_LOWER
   /* Register the user LED driver -> /dev/userleds */
 
   ret = userled_lower_initialize("/dev/userleds");
@@ -70,34 +67,35 @@ int stm32_bringup(void)
 #endif
 
 #ifdef CONFIG_I2C_BITBANG
-  FAR struct i2c_master_s *i2c;
-  int ret;
+  {
+    FAR struct i2c_master_s *i2c;
 
-  /* Initialize I2C2 bitbang driver and register /dev/i2c0 */
+    /* Initialize I2C bitbang driver and register /dev/i2c0 */
 
-  i2c = stm32_i2c_bitbang_initialize();
-  if (i2c == NULL)
-    {
-      syslog(LOG_ERR, "ERROR: stm32_i2c_bitbang_initialize() failed\n");
-    }
-  else
-    {
-      ret = i2c_register(i2c, 0);
-      if (ret < 0)
-        {
-          syslog(LOG_ERR, "ERROR: i2c_register() failed: %d\n", ret);
-        }
-      else
-        {
-          syslog(LOG_INFO, "I2C0 registered (bitbang, PE13=SCL, PE14=SDA)\n");
-        }
-    }
+    i2c = stm32_i2c_bitbang_initialize();
+    if (i2c == NULL)
+      {
+        syslog(LOG_ERR, "ERROR: stm32_i2c_bitbang_initialize() failed\n");
+      }
+    else
+      {
+        ret = i2c_register(i2c, 0);
+        if (ret < 0)
+          {
+            syslog(LOG_ERR, "ERROR: i2c_register() failed: %d\n", ret);
+          }
+        else
+          {
+            syslog(LOG_INFO, "I2C0 registered (bitbang, PE13=SCL, PE14=SDA)\n");
+          }
+      }
+  }
 #endif
-
 
 #ifdef CONFIG_SPI_BITBANG
   {
     FAR struct spi_dev_s *spi_dev;
+
     spi_dev = stm32_spi_bitbang_initialize();
     if (spi_dev == NULL)
       {
@@ -105,8 +103,15 @@ int stm32_bringup(void)
       }
     else
       {
-        spi_register(spi_dev, 0);
-        syslog(LOG_INFO, "SPI0 registered (bitbang, PE15=SCK, PH7=MOSI, PH8=MISO, PH6=CS)\n");
+        ret = spi_register(spi_dev, 0);
+        if (ret < 0)
+          {
+            syslog(LOG_ERR, "ERROR: spi_register() failed: %d\n", ret);
+          }
+        else
+          {
+            syslog(LOG_INFO, "SPI0 registered (bitbang, PE15=SCK, PH7=MOSI, PH8=MISO, PH6=CS)\n");
+          }
       }
   }
 #endif

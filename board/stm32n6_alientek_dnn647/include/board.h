@@ -85,7 +85,7 @@
 
 /* The Alientek DNN647 has two user LEDs:
  *
- *   LED1  PG10  Red
+ *   LED1  PD4   Red
  *   LED2  PE10  Green
  *
  * They are not used by the board port unless CONFIG_ARCH_LEDS is defined.
