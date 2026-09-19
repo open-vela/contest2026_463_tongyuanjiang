@@ -9,6 +9,12 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  ****************************************************************************/
 
 /****************************************************************************
@@ -37,19 +43,29 @@
 
 /****************************************************************************
  * Name: stm32_bringup
+ *
+ * Description:
+ *   板级后期初始化，注册 /dev/userleds、I2C0、SPI0 等设备节点。
+ *   /dev/userleds 始终注册（无论 CONFIG_ARCH_LEDS 是否定义），
+ *   以便 NSH `leds` 命令可以读写 LED 引脚电平。
+ *
  ****************************************************************************/
 
 int stm32_bringup(void)
 {
-#if !defined(CONFIG_ARCH_LEDS) && defined(CONFIG_USERLED_LOWER)
+#ifdef CONFIG_USERLED_LOWER
   int ret;
 
-  /* Register the LED driver */
+  /* Register the user LED driver -> /dev/userleds */
 
   ret = userled_lower_initialize("/dev/userleds");
   if (ret < 0)
     {
       syslog(LOG_ERR, "ERROR: userled_lower_initialize() failed: %d\n", ret);
+    }
+  else
+    {
+      syslog(LOG_INFO, "userleds registered at /dev/userleds\n");
     }
 #endif
 
