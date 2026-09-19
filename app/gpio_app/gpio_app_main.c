@@ -85,15 +85,24 @@ static int parse_pin(FAR const char *s, FAR uint32_t *portbits,
       return -1;
     }
 
-  port = toupper((unsigned char)s[0]);
+  /* 支持 STM32 标准命名 PXn（如 PG10、PA0）和简写 Xn（如 G10） */
+  int idx = 0;
+  if (toupper((unsigned char)s[0]) == 'P')
+    {
+      idx = 1;  /* 跳过 'P' 前缀 */
+      if (s[1] == '\0' || s[2] == '\0')
+        return -1;
+    }
+
+  port = toupper((unsigned char)s[idx]);
   if (port < 'A' || port > 'H')
     {
-      printf("ERROR: Invalid port '%c' (must be A-H)\n", s[0]);
+      printf("ERROR: Invalid port '%c' (must be A-H)\n", s[idx]);
       return -1;
     }
 
   /* 解析引脚号 */
-  if (sscanf(s + 1, "%d", &pin) != 1 || pin < 0 || pin > 15)
+  if (sscanf(s + idx + 1, "%d", &pin) != 1 || pin < 0 || pin > 15)
     {
       printf("ERROR: Invalid pin number in '%s' (must be 0-15)\n", s);
       return -1;
