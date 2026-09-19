@@ -6,6 +6,7 @@
     <linkfile src="app/hello_app" dest="packages/demos/contest2026_463_hello_app"/>
     <linkfile src="app/sensor_app" dest="packages/demos/contest2026_463_sensor_app"/>
     <linkfile src="app/gpio_app" dest="packages/demos/contest2026_463_gpio_app"/>
+    <linkfile src="app/spi_app" dest="packages/demos/contest2026_463_spi_app"/>
     <linkfile src="quickapp/hello_quickapp" dest="packages/apps/contest2026_463_hello_quickapp"/>
     <linkfile src="board/stm32n6_alientek_dnn647" dest="vendor/openvela/boards/contest2026_463_board"/>
     <linkfile src="chip/include/stm32n6" dest="nuttx/arch/arm/include/stm32n6"/>

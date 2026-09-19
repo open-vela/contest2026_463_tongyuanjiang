@@ -65,7 +65,6 @@ CONFIG_LIB_BOARDCTL=y
 
 #
 # LED support
-# - CONFIG_ARCH_LEDS: OS 状态自动指示（IDLE/IRQ/PANIC 等）
 # - CONFIG_USERLED_LOWER + /dev/userleds: shell 命令读写 LED 引脚电平
 # - CONFIG_EXAMPLES_LEDS: 周期性闪烁 LED 的守护任务（500ms 周期）
 #
@@ -94,6 +93,7 @@ CONFIG_NSH_ARCHINIT=y
 CONFIG_SPI=y
 CONFIG_SPI_BITBANG=y
 CONFIG_SPI_DRIVER=y
+CONFIG_SPI_EXCHANGE=y
 
 #
 # Sensor app (QMI8658A 6-axis IMU demo via I2C)
@@ -104,3 +104,8 @@ CONFIG_LVX_USE_DEMO_CONTEST2026_463_SENSOR_APP=y
 # GPIO app (shell command for arbitrary pin read/write/mode)
 #
 CONFIG_LVX_USE_DEMO_CONTEST2026_463_GPIO_APP=y
+
+#
+# SPI app (shell command for SPI register read/write/probe/test)
+#
+CONFIG_LVX_USE_DEMO_CONTEST2026_463_SPI_APP=y

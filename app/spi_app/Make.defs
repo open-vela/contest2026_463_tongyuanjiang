@@ -1,0 +1,4 @@
+# Make.defs for Contest 2026 team 463 spi app
+ifeq ($(CONFIG_LVX_USE_DEMO_CONTEST2026_463_SPI_APP),y)
+  CONFIGURED_APPS += spi_app
+endif
