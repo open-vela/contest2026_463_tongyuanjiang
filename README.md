@@ -139,6 +139,55 @@ dnn647-ap>
 
 ## 运行验证
 
+## xTS 认证测试
+
+参考 [openvela xTS 测试用例](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/test_dev_guide/openvela_xts_test_cases.md)，本项目执行了以下测试项：
+
+### 1.1.4 Kernel-ostest 测试
+
+启用 `CONFIG_TESTING_OSTEST=y`，在 NSH 中执行 `ostest`，NuttX 内核综合测试全部通过：
+
+| 测试项 | 结果 | 说明 |
+|--------|------|------|
+| stdio 标准I/O | PASS | printf/fprintf/stderr |
+| 参数传递 | PASS | argc/argv 验证 |
+| getopt/getopt_long | PASS | 命令行解析 |
+| libc 测试 | PASS | 标准库函数 |
+| setvbuf 缓冲 | PASS | 全/行/无缓冲模式 |
+| /dev/null | PASS | 零字节读，1024 字节写 |
+| **FPU 浮点运算** | PASS | 16 轮双线程 FPU 上下文切换 |
+| task_restart | PASS | 任务重启与环境保持 |
+| waitpid | PASS | 子进程等待 (3 进程) |
+| **mutex 互斥锁** | PASS | 32 轮双线程，0 errors |
+| **timed mutex** | PASSED | 超时获取锁 |
+| cancel 线程取消 | PASS | 正常/异步/detached/不可取消 |
+| robust 健壮锁 | PASS | 0 errors |
+| **semaphore 信号量** | PASS | 3 线程优先级链 |
+| timed semaphore | PASS | 超时等待 |
+| **condition variable** | PASS | 32 轮，0 errors |
+| pthread_exit | PASS | 线程退出清理 |
+| pthread_rwlock | PASS | 读写锁 |
+| timed wait | PASS | 超时条件变量等待 |
+| **message queue** | PASS | 10 条消息收发，0 errors |
+| timed message queue | PASS | 超时收发 |
+| sigprocmask | SUCCESS | 信号掩码 |
+| **signal handler** | PASS | 信号中断 sem_wait |
+| nested signal handler | PASS | 嵌套信号 3720 次 |
+| **spinlock 自旋锁** | PASS | 10000000 次，192678 op/s |
+
+> 结论：NuttX 内核在 STM32N647（Cortex-M55）上运行稳定可靠，调度、锁、信号、消息队列、FPU 上下文切换等核心机制均验证通过。
+
+### 其他已验证项
+
+| xTS 测试项 | 验证方式 | 结果 |
+|-----------|---------|------|
+| 1.3.6 GPIO 功能测试 | `gpio_app` + `leds` 命令 | PASS — IO 配置/读写正常 |
+| 1.3.7 I2C 功能测试 | `i2c dev` + `sensor_app` | PASS — 扫描到 5 设备，QMI8658A 数据采集正常 |
+| 1.3.7 SPI 功能测试 | `spi_app probe/test` | PASS — 20/20 传输成功，无卡死/超时 |
+| 1.3.10 UART 功能测试 | NSH 控制台 | PASS — 115200 波特率稳定通信 |
+| 1.2.3 RAM 资源占用 | SRAM 341KB / 4095KB (8.15%) | PASS |
+
+
 ### 1. GPIO 驱动验证
 
 ```

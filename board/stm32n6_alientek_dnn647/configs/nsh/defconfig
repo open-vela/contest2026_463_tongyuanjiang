@@ -109,3 +109,16 @@ CONFIG_LVX_USE_DEMO_CONTEST2026_463_GPIO_APP=y
 # SPI app (shell command for SPI register read/write/probe/test)
 #
 CONFIG_LVX_USE_DEMO_CONTEST2026_463_SPI_APP=y
+
+
+#
+#
+
+
+#
+#
+
+#
+# ostest (xTS 1.1.4)
+#
+CONFIG_TESTING_OSTEST=y
