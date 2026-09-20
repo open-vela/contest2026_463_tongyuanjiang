@@ -63,7 +63,7 @@ contest2026_463_tongyuanjiang/
     └── README.md                        # AI Coding 日志说明
 ```
 
-## 硬件信息
+### 硬件信息
 
 | 项目 | 说明 |
 |------|------|
@@ -75,7 +75,7 @@ contest2026_463_tongyuanjiang/
 | BOOT 模式 | DEV Boot (BOOT1=1) |
 | 调试接口 | ST-Link via SWD |
 
-## 外设适配
+### 外设适配
 
 | 外设 | 引脚 | 接口 | 设备节点 | 状态 |
 |------|------|------|----------|------|
@@ -85,7 +85,7 @@ contest2026_463_tongyuanjiang/
 | I2C | PE13(SCL)/PE14(SDA), 开漏 | I2C4 bitbang | /dev/i2c0 | 已验证 |
 | SPI | PE15(SCK)/PH7(MOSI)/PH8(MISO)/PH6(CS) | SPI5 bitbang | /dev/spi0 | 已验证 |
 
-## 编译
+### 编译
 
 ### 环境要求
 
@@ -109,7 +109,7 @@ cd ~/openvela
 
 > `vela_nuttx.bin` 通过 NuttX 标准 `nuttx_post_build` 机制自动生成。
 
-## 烧录与运行
+### 烧录与运行
 
 STM32N6 无内部 Flash，代码运行于 SRAM。BOOT1=1（DEV Boot 模式）。
 
@@ -139,7 +139,7 @@ dnn647-ap>
 
 ## 运行验证
 
-## xTS 认证测试
+### xTS 认证测试
 
 参考 [openvela xTS 测试用例](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/test_dev_guide/openvela_xts_test_cases.md)，本项目执行了以下测试项：
 
